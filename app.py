@@ -69,7 +69,7 @@ def insert_appointment_data(name,email,date,skin,phone,age,address,status,userna
     conn.close()                    
 
 # Load the trained model
-loaded_model = load(r"model\final_model.h5")
+loaded_model = load(r"model/final_model.h5")
 
 def findappointment(user):
     conn = sqlite3.connect('app.db')
