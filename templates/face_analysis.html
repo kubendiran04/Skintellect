@@ -1,0 +1,246 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        min-height: 90vh;
+        width: 100vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        position: relative;
+    }
+
+    .background-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(85%);
+        z-index: 0;
+    }
+
+    .upload-box {
+        width: 50vw;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        padding: 30px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+    }
+
+    h1 {
+        font-size: 36px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    p {
+        color: #666;
+        font-size: 16px;
+    }
+
+    .file-upload-box {
+        width: 100%;
+        padding: 20px;
+        border-radius: 12px;
+        border: 2px dashed #ff4d6d;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+        background: rgba(255, 77, 109, 0.05);
+    }
+
+    .file-upload-box:hover {
+        background: rgba(255, 77, 109, 0.1);
+    }
+
+    .hidden-file-input {
+        display: none;
+    }
+
+    .predict-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 18px;
+        font-weight: bold;
+        color: white;
+        background-color: #ff4d6d;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+    }
+
+    .predict-btn:hover {
+        background-color: #e63950;
+    }
+
+    .predictions-container, .recommendations-container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        width: 100%;
+        max-width: 100%;
+        display: none;
+        text-align: justify;
+    }
+
+    .condition-title {
+        color: #333;
+        font-weight: bold;
+        font-size: 22px;
+        margin-bottom: 10px;
+        text-align: Left;
+    }
+
+    .product-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .product-list li {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        font-size: 16px;
+        line-height: 1.5;
+    }
+
+    .product-list li:last-child {
+        border-bottom: none;
+    }
+
+    .preview-image {
+        display: none;
+        margin-top: 20px;
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+</style>
+
+<div class="container">
+    <img src="../static/assets/bg.webp" alt="Background" class="background-image">
+    <div class="upload-box">
+        <h1>Upload Your Image</h1>
+        <p>Get Expert AI evaluations of your skin.</p>
+        <form id="upload-form" action="/predict" method="post" enctype="multipart/form-data">
+            <label class="file-upload-box" for="file">
+                <p class="text-lg"><span class="text-blue-500 font-semibold underline">Click Here</span> To Select File</p>
+                <input id="file" class="hidden-file-input" type="file" name="image" accept="image/*" required>
+            </label>
+            <button class="predict-btn" type="submit">Predict</button>
+        </form>
+        <div class="predictions-container" id="predictions-container">
+            <h2 class="condition-title">Predictions:</h2>
+            <ul id="prediction" class="product-list"></ul>
+        </div>
+        <div class="recommendations-container" id="recommendations-container">
+            <h2 class="condition-title">Recommendations:</h2>
+            <ul id="recommendations" class="product-list"></ul>
+        </div>
+        <img src="" id="image" alt="Preview" class="hidden-file-input">
+        
+    </div>
+</div>
+
+<script>
+    // document.getElementById('file').addEventListener('change', function() {
+    //     const fileSelectedText = document.getElementById('file-selected');
+    //     const predictBtn = document.getElementById('predict-btn');
+        
+    //     if (this.files.length > 0) {
+    //         fileSelectedText.style.display = 'block';
+    //         predictBtn.disabled = false;
+    //     } else {
+    //         fileSelectedText.style.display = 'none';
+    //         predictBtn.disabled = true;
+    //     }
+    // });
+
+    document.getElementById('file').addEventListener('change', function() {
+        const fileSelectedText = document.createElement('p');
+        fileSelectedText.textContent = 'File Selected!';
+        fileSelectedText.style.color = 'green';
+        fileSelectedText.style.fontWeight = 'bold';
+        fileSelectedText.style.marginTop = '10px';
+        
+        const uploadBox = document.querySelector('.file-upload-box');
+        if (!document.querySelector('.file-upload-box p.file-selected')) {
+            fileSelectedText.classList.add('file-selected');
+            uploadBox.appendChild(fileSelectedText);
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        var data = '{{ data | tojson | safe }}';
+        const jsonData = JSON.parse(data);
+        console.log(jsonData);
+
+        const predictionContainer = document.getElementById('prediction');
+        const predictionsBox = document.getElementById('predictions-container');
+        const recommendationsBox = document.getElementById('recommendations-container');
+
+        if (jsonData.classes && jsonData.classes.length > 0) {
+            jsonData.classes.forEach(condition => {
+                const conditionItem = document.createElement('li');
+                conditionItem.textContent = condition;
+                predictionContainer.appendChild(conditionItem);
+            });
+            predictionsBox.style.display = 'block';
+        }
+
+        const recommendationContainer = document.getElementById('recommendations');
+        if (jsonData.recommendations && jsonData.recommendations.length > 0) {
+            jsonData.recommendations.forEach(item => {
+                const condition = item[0];
+                const products = item[1];
+
+                const conditionItem = document.createElement('li');
+                conditionItem.innerHTML = `<strong>${condition} :</strong> `;
+
+                products.forEach(product => {
+                    const productItem = document.createElement('li');
+                    const Ingredients = product.Ingredients.replace(/[^a-zA-Z0-9\s]/g, "");
+                    productItem.innerHTML = `
+                        <span>Brand :</span> ${product.Brand} <br>
+                        <span>Name :</span>  ${product.Name} <br>
+                        
+                        <span>Ingredients :</span> ${Ingredients}
+                    `;
+                    conditionItem.appendChild(productItem);
+                });
+
+                recommendationContainer.appendChild(conditionItem);
+            });
+            recommendationsBox.style.display = 'block';
+        }
+    });
+</script>
+
+<!--<span>Price :</span> $ ${product.Price} <br>-->
+{% endblock %}

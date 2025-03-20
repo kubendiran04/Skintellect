@@ -1,0 +1,180 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make an Appointment</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #F7F9FC;
+        }
+
+        .container {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .background-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(90%);
+            z-index: -1;
+        }
+
+        .appointment-box {
+            width: 60vw;
+            height: 70vh;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        input {
+            height: 45px;
+            width: 280px;
+            padding: 10px;
+            border: 2px solid #666;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .reason-box {
+            display: flex;
+            width: 100%;
+            justify-content: center
+        }
+
+        .submit-btn {
+            height: 50px;
+            width: 150px;
+            font-size: 1.2rem;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #218838;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img src="../static/assets/bg.webp" alt="Background Image" class="background-img">
+        
+        <div class="appointment-box">
+            <h1>Make an Appointment</h1>
+
+            <form id="appointmentForm" action="/appointment " method="POST">
+                <div class="input-group">
+                    <input type="text" name="name" id="name" placeholder="Enter Your Full Name" required>
+                    <input type="email" name="email" id="email" placeholder="Enter your Email address" required>
+                </div>
+                <div class="input-group">
+                    <input type="date" name="date" id="date" required>
+                    <input type="text" name="skin" id="skin" placeholder="Enter your Skin Type" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" name="phone" id="phone" placeholder="Enter Phone No." required>
+                    <input type="number" name="age" id="age" placeholder="Enter Your Age" required>
+                </div>
+                <div class="reason-box">
+                    <input type="text" name="address" id="reason" placeholder="Enter Reason" required>
+                </div>
+                <button type="submit" class="submit-btn">Submit</button>
+            </form>
+
+            <p id="error-message" class="error">Please fill out all fields correctly.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let today = new Date();
+            let tomorrow = new Date();
+            tomorrow.setDate(today.getDate() + 1);
+            let minDate = tomorrow.toISOString().split("T")[0];
+            document.getElementById("date").setAttribute("min", minDate);
+        });
+
+        document.getElementById("appointmentForm").addEventListener("submit", function (event) {
+            let name = document.getElementById("name").value.trim();
+            let email = document.getElementById("email").value.trim();
+            let date = document.getElementById("date").value.trim();
+            let skin = document.getElementById("skin").value.trim();
+            let phone = document.getElementById("phone").value.trim();
+            let age = document.getElementById("age").value.trim();
+            let reason = document.getElementById("reason").value;
+            let errorMessage = document.getElementById("error-message");
+
+            if (!name || !email || !date || !skin || !phone || !age || !reason) {
+                errorMessage.style.display = "block";
+                event.preventDefault();
+            } else {
+                errorMessage.style.display = "none";
+            }
+        });
+    </script>
+
+</body>
+</html>
+
+{% endblock %}

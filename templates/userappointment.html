@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Appointments</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #F7F9FC;
+            overflow-x: hidden;
+            color: #333;
+        }
+        
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            overflow-x: hidden;
+        }
+        nav {
+            height: 10vh;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1.5rem;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #E11D48;
+        }
+        nav ul {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+        nav ul a {
+            text-decoration: none;
+            color: black;
+            font-weight: 500;
+        }
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #E11D48;
+        }
+  
+        /* Main Section */
+        .appointment-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            position: relative;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .appointment-section img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(75%);
+            z-index: -1;
+        }
+
+        /* Heading */
+        .appointment-heading {
+            font-size: 3rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #222;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .appointment-heading i {
+            font-size: 3.5rem;
+            color: #FF6B6B;
+        }
+
+        /* Appointment Container */
+        #appointmentsContainer {
+            width: 90%;
+            max-width: 800px;
+            max-height: 70vh;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Appointment Card */
+        .appointment-card {
+            background: white;
+            border-left: 6px solid #4ECDC4;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem; /* Increased spacing */
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            border: 1px solid #ddd; /* Light border */
+        }
+
+        .appointment-card:not(:last-child) {
+            border-bottom: 2px dashed #ccc; /* Dashed separator */
+            padding-bottom: 1.5rem;
+        }
+
+        .appointment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .appointment-card strong {
+            color: #FF6B6B;
+            font-size: 1.2rem;
+        }
+
+        .appointment-card p {
+            font-size: 1.1rem;
+            color: #444;
+            margin-top: 5px;
+        }
+
+        /* Delete Button */
+        .delete-icon {
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            font-size: 1.4rem;
+            color: #FF6B6B;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out, color 0.3s ease;
+        }
+
+        .delete-icon:hover {
+            transform: scale(1.3);
+            color: #D43F3F;
+        }
+
+        /* Scrollbar Styling */
+        #appointmentsContainer::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #appointmentsContainer::-webkit-scrollbar-thumb {
+            background: #FF6B6B;
+            border-radius: 10px;
+        }
+
+        #appointmentsContainer::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="logo">Skintellect</div>
+        <ul>
+            <a href="{{url_for('predict')}}">Face Analysis</a>
+            <a href="{{url_for('bookappointment')}}">Book Appointment</a>
+            <a href="{{url_for('userappoint')}}">Appointments</a>
+            <a href="{{url_for('profile')}}">Profile</a>
+            <a href="{{url_for('logout')}}">Logout</a>
+        </ul>
+    </nav>
+
+    <!-- Appointments Section -->
+    <div class="appointment-section">
+        <img src="../static/assets/bg.webp" alt="Background Image">
+        
+        <div class="appointment-heading">
+            <i class="fa-solid fa-calendar-check"></i> Doctor's Appointments
+        </div>
+
+        <div id="appointmentsContainer" style="text-align: left;">
+            <!-- Appointments will be inserted here via JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        var appointments = {{ all_appointments  | safe }};
+        console.log(appointments)
+        console.log(typeof(appointments))
+        var container = document.getElementById("appointmentsContainer");
+    
+        // Iterate over the appointments array
+        appointments.forEach(function(appointment) {
+            // Create a new appointment div element
+            var appointmentDiv = document.createElement("div");
+            appointmentDiv.classList.add("h-auto", "w-full", "bg-slate-300", "mt-3", "rounded-xl", "border-black", "border-2", "p-3", "text-2xl", "font-serif","relative");
+             
+            var status;
+            if (appointment[8] == 0) {
+                status = "Pending";
+            } else {
+                status = "Accepted";
+            }
+            // Construct the content of the appointment div
+            var content = "<strong>Name:</strong> " + appointment[1] + "<br>" +
+                          "<strong>Email:</strong> " + appointment[2] + "<br>" +
+                          "<strong>Date:</strong> " + appointment[3] + "<br>" +
+                          "<strong>Skin type:</strong> " + appointment[4] + "<br>" +
+                          "<strong>status:</strong> " + status + "<br>" 
+    
+                                   
+                          
+                        var deleteIcon = document.createElement("i");
+                        deleteIcon.classList.add("fas", "fa-trash-alt", "cursor-pointer", "text-red-500", "ml-2","absolute" ,"top-4","right-4");
+                        deleteIcon.setAttribute("aria-hidden", "true");
+                    
+                        // Add event listener to delete the appointment when delete icon is clicked
+                        deleteIcon.addEventListener("click", function() {
+                          handleDelete2(appointment)  // Remove the appointment div
+                            // You may add further logic here to handle deletion from your data structure
+                        }); 
+            // Set the content of the appointment div
+            appointmentDiv.innerHTML = content;
+            appointmentDiv.appendChild(deleteIcon);
+            // Append the appointment div to the container
+            container.appendChild(appointmentDiv);
+        });
+        function handleDelete2(appointment) {
+            // You can perform delete operation here
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/delete_user_request", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.log("deleted successfully");
+                    window.location.reload();
+                    // You can perform additional actions if needed
+                }
+            };
+            xhr.send("id=" + appointment[0]);
+          
+        }
+    
+    </script>
+
+</body>
+</html>

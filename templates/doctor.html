@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #F7F9FC;
+        }
+
+        .navbar {
+            height: 10vh;
+            width: 100%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 3rem;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #E91E63;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: #E91E63;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            font-weight: bold;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: black;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #E91E63;
+        }
+
+        .container {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            position: relative;
+        }
+
+        .background-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(90%);
+            z-index: -1;
+        }
+
+        .title-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: black;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .title-box i {
+            font-size: 3rem;
+            color: black;
+        }
+
+        .appointments-container {
+            width: 80%;
+            height: 60vh;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1 class="logo">
+            <i class="fa-solid fa-user-tie"></i> SkinTellect
+        </h1>
+        <div class="nav-links">
+            <a href="/doctor"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="/"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <img src="../static/assets/bg.webp" alt="Background Image" class="background-img">
+        
+        <div class="title-box">
+            <i class="fa-solid fa-stethoscope"></i> Patient's Appointment Requests
+        </div>
+
+        <div id="appointmentsContainer" class="appointments-container">
+            <!-- Appointment requests will be displayed here -->
+        </div>
+    </div>
+    <script>
+        var Alluser = {{ appointments  | safe }};
+
+      
+        var container = document.getElementById("appointmentsContainer");
+
+        // Iterate over the appointments array
+
+       
+
+        // Iterate over the appointments array
+        Alluser.forEach(function(appointment) {
+            // Create a new appointment div element
+            var appointmentDiv = document.createElement("div");
+            appointmentDiv.classList.add("h-auto", "w-full", "bg-slate-300", "mt-3", "rounded-xl", "border-black", "border-2", "p-3", "text-xl", "font-serif", "mb-3", "relative");
+         
+            // Construct the content of the appointment div
+            var content = "<strong>Name:</strong> " + appointment[1] + "<br>" +
+                          "<strong>Email:</strong> " + appointment[2] + "<br>" +
+                          "<strong>Date:</strong> " + appointment[3] + "<br>" +
+                          "<strong>Skin Type:</strong> " + appointment[4] + "<br>"+
+                          "<strong>Phone No.:</strong> " + appointment[5] + "<br>"+
+                          "<strong>Reason :</strong> " + appointment[7] + "<br>"
+                          ;
+        
+            // Set the content of the appointment div
+            appointmentDiv.innerHTML = content;
+        
+            // Create icon for check (assuming it's a check mark)
+            var checkIcon = document.createElement("i");
+            if (appointment[8]==0){
+            checkIcon.classList.add("fas", "fa-check", "text-xl","text-green-500", "mr-2", "cursor-pointer","ml-2","absolute" ,"top-10","right-12");
+            }
+            checkIcon.onclick = function() {
+                // Call a function to handle check operation
+                handleCheck(appointment); // Pass appointment details to the function
+            };
+        
+            // Create icon for trash (assuming it's a trash can)
+            var trashIcon = document.createElement("i");
+            trashIcon.classList.add("fas", "fa-trash-alt", "text-xl","text-red-500", "cursor-pointer","ml-2","absolute" ,"top-10","right-4");
+            trashIcon.onclick = function() {
+                // Call a function to handle delete operation
+                handleDelete(appointment); // Pass appointment details to the function
+            };
+        
+            // Append icons to the appointment div
+            appointmentDiv.appendChild(checkIcon);
+            appointmentDiv.appendChild(trashIcon);
+        
+            // Append the appointment div to the container
+            container.appendChild(appointmentDiv);
+        });
+        
+        // Function to handle check operation
+        function handleCheck(appointment) {
+         
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/update_status", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.log("Appointment status updated successfully");
+                    window.location.reload();
+                    // You can perform additional actions if needed
+                }
+            };
+            xhr.send("appointment_id=" + appointment[0]+"&type="+ appointment[5]);
+
+        }
+        
+        // Function to handle delete operation
+        function handleDelete(appointment) {
+            // You can perform delete operation here
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/delete_user_request", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.log("deleted successfully");
+                    window.location.reload();
+                    // You can perform additional actions if needed
+                }
+            };
+            xhr.send("id=" + appointment[0]);
+          
+        }
+
+    
+    </script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skin Health Survey</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&family=Inter:wght@200;300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Onest:wght@400;500;600;700;800&family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to right, #ffdde1, #ee9ca7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2.5rem;
+            border-radius: 16px;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 500px;
+            transition: transform 0.3s ease-in-out;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            color: #2D3748;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            color: #555;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            background-color: #2563EB;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .button:hover {
+            background-color: #1E40AF;
+            transform: scale(1.05);
+        }
+
+        /* Navbar Space */
+        .nav-space {
+            height: 10vh;
+            width: 100%;
+        }
+
+        /* Fade-in Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Space for Navbar to Prevent Overlapping -->
+    <div class="nav-space"></div>
+
+    <div class="container">
+        <h1>Welcome to the Skin Health Survey</h1>
+        <p>Take control of your skin health journey.</p>
+        <a href="/register" class="button">Register</a>
+        <a href="/login" class="button">Login</a>
+    </div>
+
+</body>
+</html>
